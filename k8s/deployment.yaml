@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-meeting-app
+  labels:
+    app: post-meeting-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: post-meeting-app
+  template:
+    metadata:
+      labels:
+        app: post-meeting-app
+    spec:
+      containers:
+      - name: post-meeting-app
+        image: post-meeting-app:latest
+        ports:
+        - containerPort: 4000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: database-url
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: secret-key-base
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: google-client-id
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: google-client-secret
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: openai-api-key
+        - name: RECALL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: recall-api-key
+        - name: LINKEDIN_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: linkedin-client-id
+        - name: LINKEDIN_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: linkedin-client-secret
+        - name: FACEBOOK_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: facebook-client-id
+        - name: FACEBOOK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: post-meeting-app-secrets
+              key: facebook-client-secret
+        - name: PORT
+          value: "4000"
+        - name: HOST
+          value: "your-domain.com"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-meeting-app
+spec:
+  selector:
+    app: post-meeting-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4000
+  type: LoadBalancer
+
